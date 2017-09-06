@@ -50,7 +50,7 @@ var requestHandler = function(request, response) {
     response.end();
   } else if (request.method === 'POST') {
     //console.log('in post');
-    request.on('data',(info) => {
+    request.on('data', (info) => {
       var message = info.toString();
       var obj = {};
       message.split('&').forEach(function(group) {
@@ -69,7 +69,7 @@ var requestHandler = function(request, response) {
     response.writeHead(200, headers);
     response.end(JSON.stringify(data));
 
-  } else if  (request.method === 'OPTIONS') {
+  } else if (request.method === 'OPTIONS') {
   //  console.log('in optioins');
     response.writeHead(200, headers);
     response.end();
