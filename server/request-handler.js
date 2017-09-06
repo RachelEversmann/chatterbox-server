@@ -28,29 +28,46 @@ var defaultCorsHeaders = {
 };
 
 var data = {
-  results: []
+  results: [{
+    username: 'Robert',
+    roomname: 'lobby',
+    text: 'Hi, I am awesome',
+    objectId: 5
+  }]
 };
 
-var urls = ['/classes/messages', '/classes/room'];
+var urls = ['/classes/messages', '/classes/room', '/messages/rooms'];
 
 var requestHandler = function(request, response) {
 
   var headers = {};
   headers['Content-Type'] = 'text/plain';
+  headers = defaultCorsHeaders;
+
   if (urls.indexOf(request.url) === -1) {
     response.writeHead(404, headers);
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^ error ", request.url);
     response.end();
   } else if (request.method === 'POST') {
-    request.on('data', (info) => {
+    console.log('in post');
+    request.on('data',(info) => {
       data.results.push(JSON.parse(info));
     });
-    headers = defaultCorsHeaders;
     response.writeHead(201, headers);
     response.end(JSON.stringify(data));
+
   } else if (request.method === 'GET') {
-    headers = defaultCorsHeaders;
+    console.log('in get \n',data);
     response.writeHead(200, headers);
     response.end(JSON.stringify(data));
+
+  } else if  (request.method === 'OPTIONS') {
+    console.log('in optioins');
+    response.writeHead(200, headers);
+    response.end();
+
+  } else {
+    console.log("#####################", request.method);
   }
 };
 
