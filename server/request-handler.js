@@ -46,28 +46,36 @@ var requestHandler = function(request, response) {
 
   if (urls.indexOf(request.url) === -1) {
     response.writeHead(404, headers);
-    console.log("^^^^^^^^^^^^^^^^^^^^^^^^ error ", request.url);
+    //console.log("^^^^^^^^^^^^^^^^^^^^^^^^ error ", request.url);
     response.end();
   } else if (request.method === 'POST') {
-    console.log('in post');
+    //console.log('in post');
     request.on('data',(info) => {
-      data.results.push(JSON.parse(info));
+      var message = info.toString();
+      var obj = {};
+      message.split('&').forEach(function(group) {
+        var kv = group.split('=');
+        obj[kv[0]] = kv[1];
+      });
+      obj.objectId = data.results.length;
+    //  console.log("info",obj);
+      data.results.push(obj);
     });
     response.writeHead(201, headers);
     response.end(JSON.stringify(data));
 
   } else if (request.method === 'GET') {
-    console.log('in get \n',data);
+  //  console.log('in get \n',data);
     response.writeHead(200, headers);
     response.end(JSON.stringify(data));
 
   } else if  (request.method === 'OPTIONS') {
-    console.log('in optioins');
+  //  console.log('in optioins');
     response.writeHead(200, headers);
     response.end();
 
   } else {
-    console.log("#####################", request.method);
+  //  console.log("#####################", request.method);
   }
 };
 
