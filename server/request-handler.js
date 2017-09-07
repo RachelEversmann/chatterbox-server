@@ -30,6 +30,16 @@ var defaultCorsHeaders = {
 
 var urls = ['/classes/messages', '/classes/room', '/messages/rooms', '/test'];
 
+var data = {
+  results: [{
+    username: 'Robert',
+    roomname: 'lobby',
+    text: 'Hi, I am awesome',
+    objectId: 5
+  }]
+};
+
+
 var requestHandler = function(request, response) {
 
   var headers = {};
@@ -43,6 +53,9 @@ var requestHandler = function(request, response) {
   } else if (request.url === '/test') {
     console.log('Im testing!!!!!');
     fs.readFile('./server/html/data.js', function (error, data) {
+      // var newData = JSON.parse(data.toString());
+      var newData = JSON.parse(data.toString());
+      console.log('############################','New Data', newData, 'results', newData.results);
       response.writeHead(200, { 'Content-Type' : 'text/html'});
       response.end(data);
     });
@@ -51,21 +64,38 @@ var requestHandler = function(request, response) {
     request.on('data', (info) => {
       var message = info.toString();
       var obj = {};
-      message.split('&').forEach(function(group) {
-        var kv = group.split('=');
-        obj[kv[0]] = kv[1];
+      console.log('this is message',message);
+
+      fs.readFile('./server/html/data.js', function (error, data) {
+        obj = JSON.parse(data.toString());
+        console.log('&&&&&&&&&&&&&&&&&&&&&&&&', obj);
+        var newResult = {};
+        message.split('&').forEach(function(group) {
+          var kv = group.split('=');
+          newResult[kv[0]] = decodeURIComponent(kv[1]).replace('+', ' ');
+          // obj.results.push({[kv[0]] : kv[1]});
+        });
+
+        newResult.objectId = obj.results.length;
+        obj.results.push(newResult);
+        console.log('^^^^^^^^^^^^^^^^^^^^^^^^', obj);
+        fs.writeFile('./server/html/data.js', JSON.stringify(obj), 'utf-8', function() {
+          console.log('heyyyyyy!!!!');
+        } );
       });
-      obj.objectId = data.results.length;
-    //  console.log("info",obj);
-      data.results.push(obj);
+
     });
     response.writeHead(201, headers);
     response.end(JSON.stringify(data));
 
   } else if (request.method === 'GET') {
   //  console.log('in get \n',data);
-    response.writeHead(200, headers);
-    response.end(JSON.stringify(data));
+    fs.readFile('./server/html/data.js', function (error, data) {
+      // var newData = JSON.parse(data.toString());
+      var newData = JSON.parse(data.toString());
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(newData));
+    });
 
   } else if (request.method === 'OPTIONS') {
   //  console.log('in optioins');
