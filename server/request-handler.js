@@ -20,6 +20,7 @@ this file and include it in basic-server.js so that it actually works.
 //
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
+var fs = require('fs');
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -27,16 +28,7 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
-var data = {
-  results: [{
-    username: 'Robert',
-    roomname: 'lobby',
-    text: 'Hi, I am awesome',
-    objectId: 5
-  }]
-};
-
-var urls = ['/classes/messages', '/classes/room', '/messages/rooms'];
+var urls = ['/classes/messages', '/classes/room', '/messages/rooms', '/test'];
 
 var requestHandler = function(request, response) {
 
@@ -48,6 +40,12 @@ var requestHandler = function(request, response) {
     response.writeHead(404, headers);
     //console.log("^^^^^^^^^^^^^^^^^^^^^^^^ error ", request.url);
     response.end();
+  } else if (request.url === '/test') {
+    console.log('Im testing!!!!!');
+    fs.readFile('./server/html/data.js', function (error, data) {
+      response.writeHead(200, { 'Content-Type' : 'text/html'});
+      response.end(data);
+    });
   } else if (request.method === 'POST') {
     //console.log('in post');
     request.on('data', (info) => {
@@ -77,6 +75,8 @@ var requestHandler = function(request, response) {
   } else {
   //  console.log("#####################", request.method);
   }
+
+  return;
 };
 
 
