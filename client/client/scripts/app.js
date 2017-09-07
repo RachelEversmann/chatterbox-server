@@ -61,6 +61,7 @@ var app = {
       type: 'GET',
       contentType: 'text/plain',
       success: function(data) {
+        // console.log('Are we successfully fetching?', data.results);
         data = JSON.parse(data);
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
