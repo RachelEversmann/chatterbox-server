@@ -5,6 +5,7 @@ var fs = require('fs');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var path = require('path');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -24,6 +25,7 @@ var port = 3000;
 // special address that always refers to localhost.
 var ip = '127.0.0.1';
 
+var _DIR = `${process.cwd()}/server/client/client/`;
 // var sample = {
 //   results: [
 //     {
@@ -54,17 +56,10 @@ app.use(function (req, res, next) {
   (req.method === 'OPTIONS') ? res.status(200) : next();
 });
 
+app.use('/',express.static('server/client/client'));
+
 app.get('/', function (req, res) {
-  // res.send('Hello World!');
-  fs.readFile('./server/html/data.js', function (error, data) {
-    var newData = JSON.parse(data.toString());
-    res.send(newData);
-    // res.writeHead(200, headers);
-    // res.end(JSON.stringify(newData));
-  });
-});
-app.get('/test', function (req, res) {
-  res.send('now we are here');
+  res.sendFile('/index.html');
 });
 
 app.get('/classes/messages', function (req, res) {
